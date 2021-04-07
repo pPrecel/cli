@@ -2,6 +2,8 @@ package kyma
 
 import (
 	"github.com/kyma-project/cli/cmd/kyma/alpha"
+	alphaAdd "github.com/kyma-project/cli/cmd/kyma/alpha/add"
+	"github.com/kyma-project/cli/cmd/kyma/alpha/add/apirule"
 	alphaDelete "github.com/kyma-project/cli/cmd/kyma/alpha/delete"
 	alphaInstall "github.com/kyma-project/cli/cmd/kyma/alpha/deploy"
 	alphaProvision "github.com/kyma-project/cli/cmd/kyma/alpha/provision"
@@ -67,6 +69,10 @@ Kyma CLI allows you to install, test, and manage Kyma.
 	alphaProvisionCmd := alphaProvision.NewCmd()
 	alphaProvisionCmd.AddCommand(k3s.NewCmd(k3s.NewOptions(o)))
 	alphaCmd.AddCommand(alphaProvisionCmd)
+
+	add := alphaAdd.NewCmd()
+	add.AddCommand(apirule.NewCmd(apirule.NewOptions(o)))
+	alphaCmd.AddCommand(add)
 
 	//Stable commands
 	provisionCmd := provision.NewCmd()

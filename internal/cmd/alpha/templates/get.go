@@ -57,15 +57,15 @@ func buildGetCommand(out io.Writer, clientGetter KubeClientGetter, options *GetO
 }
 
 func buildGetExample(options *GetOptions) string {
-	template := "  # list all resources from the default namespace\n" +
+	template := "  # list all resources\n" +
 		"  kyma alpha ROOT_COMMAND get\n" +
 		"\n" +
-		"  # get resource with a specific name from the default namespace\n" +
+		"  # get resource with a specific name\n" +
 		"  kyma alpha ROOT_COMMAND get resource_name"
 
 	if options.ResourceInfo.Scope == types.NamespaceScope {
 		template += "\n\n" +
-			"  # list all resources from the specific namespa\n" +
+			"  # list all resources from the specific namespaces\n" +
 			"  kyma alpha ROOT_COMMAND get -n namespace_name\n" +
 			"\n" +
 			"  # list all resources from all namespaces\n" +

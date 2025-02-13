@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/kyma-project/cli.v3/internal/clierror"
 	"github.com/kyma-project/cli.v3/internal/cmd/alpha/templates/parameters"
@@ -17,6 +18,7 @@ import (
 type DeleteOptions struct {
 	types.DeleteCommand
 	ResourceInfo types.ResourceInfo
+	RootCommand  types.RootCommand
 }
 
 func BuildDeleteCommand(clientGetter KubeClientGetter, options *DeleteOptions) *cobra.Command {
@@ -26,9 +28,10 @@ func BuildDeleteCommand(clientGetter KubeClientGetter, options *DeleteOptions) *
 func buildDeleteCommand(out io.Writer, clientGetter KubeClientGetter, options *DeleteOptions) *cobra.Command {
 	extraValues := []parameters.Value{}
 	cmd := &cobra.Command{
-		Use:   "delete",
-		Short: options.Description,
-		Long:  options.DescriptionLong,
+		Use:     "delete",
+		Short:   options.Description,
+		Long:    options.DescriptionLong,
+		Example: buildDeleteExample(options),
 		Run: func(cmd *cobra.Command, args []string) {
 			clierror.Check(deleteResource(&deleteArgs{
 				out:           out,
@@ -53,6 +56,19 @@ func buildDeleteCommand(out io.Writer, clientGetter KubeClientGetter, options *D
 	}
 
 	return cmd
+}
+
+func buildDeleteExample(options *DeleteOptions) string {
+	template := "  # delete resource\n" +
+		"  kyma alpha ROOT_COMMAND delete <resource_name>"
+
+	if options.ResourceInfo.Scope == types.NamespaceScope {
+		template += "\n\n" +
+			"  # delete resource from specific namespace\n" +
+			"  kyma alpha ROOT_COMMAND delete <resource_name> --namespace <resource_namespace> "
+	}
+
+	return strings.ReplaceAll(template, "ROOT_COMMAND", options.RootCommand.Name)
 }
 
 type deleteArgs struct {

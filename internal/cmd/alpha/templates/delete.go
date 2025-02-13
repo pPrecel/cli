@@ -40,13 +40,16 @@ func buildDeleteCommand(out io.Writer, clientGetter KubeClientGetter, options *D
 		},
 	}
 
-	for _, flag := range commonResourceFlags(options.ResourceInfo.Scope) {
-		value := parameters.NewTyped(flag.Type, flag.Path, flag.DefaultValue)
-		cmd.Flags().VarP(value, flag.Name, flag.Shorthand, flag.Description)
-		if flag.Required {
-			_ = cmd.MarkFlagRequired(flag.Name)
-		}
-		extraValues = append(extraValues, value)
+	// define resource name as required args[0]
+	nameArgValue := parameters.NewTyped(resourceNameFlag.Type, resourceNameFlag.Path, resourceNameFlag.DefaultValue)
+	cmd.Args = AssignRequiredNameArg(nameArgValue)
+	extraValues = append(extraValues, nameArgValue)
+
+	// define --namespace/-n flag only is resource is namespace scoped
+	if options.ResourceInfo.Scope == types.NamespaceScope {
+		namespaceFlagValue := parameters.NewTyped(resourceNamespaceFlag.Type, resourceNamespaceFlag.Path, resourceNamespaceFlag.DefaultValue)
+		cmd.Flags().VarP(namespaceFlagValue, resourceNamespaceFlag.Name, resourceNamespaceFlag.Shorthand, resourceNamespaceFlag.Description)
+		extraValues = append(extraValues, namespaceFlagValue)
 	}
 
 	return cmd

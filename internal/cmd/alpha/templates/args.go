@@ -26,7 +26,6 @@ func AssignRequiredNameArg(name parameters.Value) func(*cobra.Command, []string)
 			return fmt.Errorf("requires exactly one resource name as an argument, received %d", len(args))
 		}
 
-		name.Set(args[0])
-		return nil
+		return name.Set(args[0])
 	}
 }

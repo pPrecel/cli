@@ -2,11 +2,11 @@ package actions
 
 import (
 	"github.com/kyma-project/cli.v3/internal/clierror"
-	"github.com/kyma-project/cli.v3/internal/cmd/alpha/templates/types"
+	"github.com/kyma-project/cli.v3/internal/cmdcommon"
 	"gopkg.in/yaml.v3"
 )
 
-func parseActionConfig[T any](in types.ActionConfig, out *T) clierror.Error {
+func parseActionConfig[T any](in cmdcommon.CommandConfig, out *T) clierror.Error {
 	if in == nil {
 		return clierror.New("empty config object")
 	}

@@ -3,45 +3,52 @@ package parameters
 import (
 	"os"
 
-	templates_types "github.com/kyma-project/cli.v3/internal/cmd/alpha/templates/types"
 	cmdcommon_types "github.com/kyma-project/cli.v3/internal/cmdcommon/types"
 	"github.com/spf13/pflag"
 )
 
+type ConfigFieldType string
+
+const (
+	StringCustomType ConfigFieldType = "string"
+	PathCustomType   ConfigFieldType = "path"
+	IntCustomType    ConfigFieldType = "int"
+	BoolCustomType   ConfigFieldType = "bool"
+	// TODO: support other types e.g. float and stringArray
+)
+
+var (
+	ValidTypes = []ConfigFieldType{
+		StringCustomType,
+		PathCustomType,
+		IntCustomType,
+		BoolCustomType,
+	}
+)
+
 type Value interface {
 	pflag.Value
+	SetValue(string) error
 	GetValue() interface{}
 	GetPath() string
 }
 
-func NewTyped(paramType templates_types.CreateCustomFlagType, resourcepath string, defaultValue interface{}) Value {
+func NewTyped(paramType ConfigFieldType, resourcepath string) Value {
 	switch paramType {
-	case templates_types.PathCustomFlagType:
-		return newPathValue(resourcepath, defaultValue)
-	case templates_types.IntCustomFlagType:
-		return newInt64Value(resourcepath, defaultValue)
-	case templates_types.BoolCustomFlagType:
-		return newBoolValue(resourcepath, defaultValue)
+	case PathCustomType:
+		return &pathValue{stringValue: &stringValue{path: resourcepath}}
+	case IntCustomType:
+		return &int64Value{path: resourcepath}
+	case BoolCustomType:
+		return &boolValue{path: resourcepath}
 	default:
-		return newStringValue(resourcepath, defaultValue)
+		return &stringValue{path: resourcepath}
 	}
 }
 
 type boolValue struct {
 	*cmdcommon_types.NullableBool
 	path string
-}
-
-func newBoolValue(path string, defaultValue interface{}) *boolValue {
-	value := cmdcommon_types.NullableBool{}
-	defaultBool, ok := sanitizeDefaultValue(defaultValue).(bool)
-	if ok {
-		value.Value = &defaultBool
-	}
-	return &boolValue{
-		NullableBool: &value,
-		path:         path,
-	}
 }
 
 func (v *boolValue) GetValue() interface{} {
@@ -52,26 +59,17 @@ func (v *boolValue) GetValue() interface{} {
 	return *v.Value
 }
 
-func (sv *boolValue) GetPath() string {
-	return sv.path
+func (v *boolValue) GetPath() string {
+	return v.path
+}
+
+func (v *boolValue) SetValue(value string) error {
+	return v.Set(value)
 }
 
 type int64Value struct {
-	*cmdcommon_types.NullableInt64
+	cmdcommon_types.NullableInt64
 	path string
-}
-
-func newInt64Value(path string, defaultValue interface{}) *int64Value {
-	value := cmdcommon_types.NullableInt64{}
-	defaultInt64, ok := sanitizeDefaultValue(defaultValue).(int64)
-	if ok {
-		value.Value = &defaultInt64
-	}
-
-	return &int64Value{
-		NullableInt64: &value,
-		path:          path,
-	}
 }
 
 func (v *int64Value) GetValue() interface{} {
@@ -86,21 +84,13 @@ func (v *int64Value) GetPath() string {
 	return v.path
 }
 
-type stringValue struct {
-	*cmdcommon_types.NullableString
-	path string
+func (v *int64Value) SetValue(value string) error {
+	return v.Set(value)
 }
 
-func newStringValue(path string, defaultValue interface{}) *stringValue {
-	value := cmdcommon_types.NullableString{}
-	defaultString, ok := sanitizeDefaultValue(defaultValue).(string)
-	if ok {
-		value.Value = &defaultString
-	}
-	return &stringValue{
-		NullableString: &value,
-		path:           path,
-	}
+type stringValue struct {
+	cmdcommon_types.NullableString
+	path string
 }
 
 func (v *stringValue) GetValue() interface{} {
@@ -115,14 +105,12 @@ func (sv *stringValue) GetPath() string {
 	return sv.path
 }
 
-type pathValue struct {
-	*stringValue
+func (sv *stringValue) SetValue(value string) error {
+	return sv.Set(value)
 }
 
-func newPathValue(path string, defaultValue interface{}) *pathValue {
-	return &pathValue{
-		stringValue: newStringValue(path, defaultValue),
-	}
+type pathValue struct {
+	*stringValue
 }
 
 func (pv *pathValue) Set(value string) error {
@@ -131,5 +119,9 @@ func (pv *pathValue) Set(value string) error {
 		return err
 	}
 
-	return pv.stringValue.Set(string(bytes))
+	return pv.SetValue(string(bytes))
+}
+
+func (pv *pathValue) SetValue(value string) error {
+	return pv.stringValue.Set(value)
 }

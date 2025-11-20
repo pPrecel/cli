@@ -1,13 +1,13 @@
 # kyma module delete
 
-Deletes a module.
+Deletes a modules.
 
 ## Synopsis
 
 Use this command to delete a module.
 
 ```bash
-kyma module delete <module> [flags]
+kyma module delete <module/s> [flags]
 ```
 
 ## Flags

@@ -15,7 +15,7 @@ kyma module <command> [flags]
 ```text
   add      - Add a module
   catalog  - Lists modules catalog
-  delete   - Deletes a modules
+  delete   - Deletes a module
   list     - Lists the installed modules
   manage   - Sets the module to the managed state
   pull     - Pull a module from a remote repository
@@ -37,7 +37,7 @@ kyma module <command> [flags]
 * [kyma](kyma.md)                                 - A simple set of commands to manage a Kyma cluster
 * [kyma module add](kyma_module_add.md)           - Add a module
 * [kyma module catalog](kyma_module_catalog.md)   - Lists modules catalog
-* [kyma module delete](kyma_module_delete.md)     - Deletes a modules
+* [kyma module delete](kyma_module_delete.md)     - Deletes a module
 * [kyma module list](kyma_module_list.md)         - Lists the installed modules
 * [kyma module manage](kyma_module_manage.md)     - Sets the module to the managed state
 * [kyma module pull](kyma_module_pull.md)         - Pull a module from a remote repository

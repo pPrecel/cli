@@ -1,6 +1,6 @@
 # kyma module delete
 
-Deletes a modules.
+Deletes a module.
 
 ## Synopsis
 

@@ -33,7 +33,7 @@ func newDeleteCMD(kymaConfig *cmdcommon.KymaConfig) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "delete <module/s> [flags]",
-		Short:   "Deletes a modules",
+		Short:   "Deletes a module",
 		Long:    "Use this command to delete a module.",
 		Aliases: []string{"del"},
 		Args:    cobra.MinimumNArgs(1),

@@ -1,0 +1,20 @@
+name: dev testing
+
+on:
+  workflow_dispatch: {}
+
+# permissions:
+#   # Permission to post comments on pull requests
+#   pull-requests: write
+
+jobs:
+  standards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kyma-project/setup-kyma-cli@v1
+        with:
+          version: latest
+    #   - name: ensure kyma cli binary in PATH // <-- this should not be needed
+    #     run: echo "$HOME/.local/bin" >> $GITHUB_PATH    
+      - name: print kyma version
+        run: kyma version
